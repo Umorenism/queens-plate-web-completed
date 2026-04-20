@@ -947,7 +947,7 @@ export const Menu = () => {
         transition={{ duration: 0.6 }}
         className="bg-[#f6e6d2] py-14 md:py-20 px-4 md:px-6"
       >
-        <div className="max-w-7xl mt-6 md:mt-10 mx-auto text-center">
+        <div className="max-w-7xl mt-10 md:mt-10 mx-auto text-center">
           <motion.h2 className="text-2xl md:text-4xl font-bold text-gray-800">
             Menu Categories
           </motion.h2>

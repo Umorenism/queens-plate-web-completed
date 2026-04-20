@@ -49,7 +49,7 @@ export default function Contact() {
               {[Phone, Mail,  Clock].map((Icon, index) => {
                 const content = [
                   ["Phone", "+234 8167934957"],
-                  ["Email", "hello@queenplate.com"],
+                  ["Email", "queensplate@outlook.com"],
                   // ["Location", "12 Orion road Uyo, Akwa Ibom State."],
                   ["Hours", "Mon-Fri: 11AM - 5PM"],
                 ];
