@@ -13,6 +13,7 @@ import Home from "../pages/Home";
 import ScrollToTop from "../hooks/useScroll";
 import { Footer } from "../component/layout/Footer";
 import { Navbar } from "../component/layout/Navbar";
+import PrivatePolicy from "../private/PrivatePolicy";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -25,6 +26,7 @@ const AnimatedRoutes = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy-policy" element={<PrivatePolicy />} />
       </Routes>
     </AnimatePresence>
   );
