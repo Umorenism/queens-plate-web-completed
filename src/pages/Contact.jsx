@@ -23,7 +23,7 @@ export default function Contact() {
       from_name: formData.name,
       from_email: formData.email,
       message: formData.message,
-      to_email: "queensplate@outlook.com",
+      to_email: "queenplatkitchen@gmail.com",
     };
 
     emailjs
