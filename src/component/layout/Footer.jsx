@@ -389,30 +389,36 @@ export const Footer = () => {
   
   // 1. Define the Redirect Logic (Must be before return)
   const handleAppRedirect = (e) => {
-    e.preventDefault();
-    
-    // Get the user agent string
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  e.preventDefault();
 
-    // REPLACE THESE with your actual App Store and Play Store links
-    const androidUrl = "https://play.google.com/store/apps/details?id=YOUR_ANDROID_ID";
-    const iosUrl = "https://apps.apple.com/app/YOUR_IOS_ID";
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-    if (/android/i.test(userAgent)) {
-      window.location.href = androidUrl;
-    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-      window.location.href = iosUrl;
-    } else {
-      // Desktop Fallback: Scroll to the section where QR codes or download buttons are
-      const section = document.getElementById("download-section");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-      } else {
-        // Optional: Alert if testing on desktop and section isn't found
-        console.log("On Desktop: No download section found.");
-      }
-    }
-  };
+  const androidUrl =
+    "https://play.google.com/store/apps/details?id=com.queensplate.app";
+
+  const iosUrl =
+    "https://apps.apple.com/app/id1234567890";
+
+  if (/android/i.test(userAgent)) {
+    window.location.href = androidUrl;
+    return;
+  }
+
+  if (/iPad|iPhone|iPod/.test(userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+    window.location.href = iosUrl;
+    return;
+  }
+
+  // Desktop fallback
+  const section = document.getElementById("download-section");
+
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth" });
+  } else {
+    window.open(androidUrl, "_blank");
+  }
+};
 
   // 2. Define the Link Logic (Must be before return)
   const getHref = (item) => {

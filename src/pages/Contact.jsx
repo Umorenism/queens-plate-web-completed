@@ -1,22 +1,52 @@
-import { useState } from 'react';
+
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Mail,  Clock } from 'lucide-react';
+import { Phone, Mail, Clock } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
+    name: "",
+    email: "",
+    message: "",
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // ✅ Email sending function
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Message sent successfully! (Demo)');
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message,
+      to_email: "queensplate@outlook.com",
+    };
+
+    emailjs
+      .send(
+        "service_xxxxx", // replace with your EmailJS service ID
+        "template_xxxxx", // replace with your template ID
+        templateParams,
+        "public_xxxxx" // replace with your public key
+      )
+      .then(
+        () => {
+          alert("Message sent successfully!");
+          setFormData({
+            name: "",
+            email: "",
+            message: "",
+          });
+        },
+        (error) => {
+          console.error("Email error:", error);
+          alert("Failed to send message. Try again.");
+        }
+      );
   };
 
   return (
@@ -28,9 +58,6 @@ export default function Contact() {
       className="min-h-screen bg-gradient-to-br from-[#fff7e6] via-[#ffe4c4] to-[#ffd4a3] flex items-center justify-center p-6 font-sans"
     >
       <div className="w-full md:mt-10 mt-[80px] max-w-7xl overflow-hidden ">
-
-      
-
         <div className="p-10 md:p-16">
           <motion.h1
             initial={{ y: 40, opacity: 0 }}
@@ -43,14 +70,12 @@ export default function Contact() {
           </motion.h1>
 
           <div className="grid md:grid-cols-2 gap-16">
-
-            {/* Left Column - Contact Info */}
+            {/* Contact Info */}
             <div className="space-y-10">
-              {[Phone, Mail,  Clock].map((Icon, index) => {
+              {[Phone, Mail, Clock].map((Icon, index) => {
                 const content = [
                   ["Phone", "+234 8167934957"],
                   ["Email", "queensplate@outlook.com"],
-                  // ["Location", "12 Orion road Uyo, Akwa Ibom State."],
                   ["Hours", "Mon-Fri: 11AM - 5PM"],
                 ];
 
@@ -88,9 +113,8 @@ export default function Contact() {
               })}
             </div>
 
-            {/* Right Column - Contact Form */}
+            {/* Contact Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-
               <motion.div
                 initial={{ x: 60, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -120,8 +144,7 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className="w-full px-6 py-4 rounded-2xl border border-gray-200
-                   focus:border-orange-400 focus:ring-4 focus:ring-orange-100 outline-none transition-all text-gray-700 placeholder-gray-400"
+                  className="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 outline-none transition-all text-gray-700 placeholder-gray-400"
                   required
                 />
               </motion.div>
@@ -151,7 +174,6 @@ export default function Contact() {
               >
                 Send Message
               </motion.button>
-
             </form>
           </div>
         </div>

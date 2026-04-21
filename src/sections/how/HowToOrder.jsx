@@ -124,6 +124,46 @@ export const HowToOrder = () => {
     },
   ];
 
+
+  // ✅ App Download Redirect Logic
+  const handleAppRedirect = (e) => {
+    e.preventDefault();
+
+    const userAgent =
+      navigator.userAgent || navigator.vendor || window.opera;
+
+    const androidUrl =
+      "https://play.google.com/store/apps/details?id=com.queensplate.app";
+
+    const iosUrl =
+      "https://apps.apple.com/app/id1234567890";
+
+    // Android detection
+    if (/android/i.test(userAgent)) {
+      window.location.href = androidUrl;
+      return;
+    }
+
+    // iOS detection (supports modern iPads too)
+    if (
+      /iPad|iPhone|iPod/.test(userAgent) ||
+      (navigator.platform === "MacIntel" &&
+        navigator.maxTouchPoints > 1)
+    ) {
+      window.location.href = iosUrl;
+      return;
+    }
+
+    // Desktop fallback
+    const section = document.getElementById("download-section");
+
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.open(androidUrl, "_blank");
+    }
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -203,6 +243,7 @@ export const HowToOrder = () => {
           
           {/* Primary button */}
           <motion.button
+          onClick={handleAppRedirect}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-[#D4AF37] text-black px-6 py-3 rounded-full font-medium hover:opacity-90 transition"
@@ -212,6 +253,7 @@ export const HowToOrder = () => {
 
           {/* Outline button */}
           <motion.button
+            onClick={handleAppRedirect}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="border border-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-[#B3202A] transition"
