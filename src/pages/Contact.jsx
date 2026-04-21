@@ -18,6 +18,7 @@ export default function Contact() {
   // ✅ Email sending function
   const handleSubmit = (e) => {
     e.preventDefault();
+    
 
     const templateParams = {
       from_name: formData.name,
@@ -28,10 +29,10 @@ export default function Contact() {
 
     emailjs
       .send(
-        "service_xxxxx", // replace with your EmailJS service ID
-        "template_xxxxx", // replace with your template ID
+        "service_qrgscys", //  EmailJS service ID
+        "template_004whmv", // template ID
         templateParams,
-        "public_xxxxx" // replace with your public key
+        "gyWlQDXNEUdeFrbu-" //  public key
       )
       .then(
         () => {
