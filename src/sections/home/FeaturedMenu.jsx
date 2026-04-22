@@ -4,8 +4,8 @@
 import React, { useEffect, useState } from "react";
 import { FiShoppingCart } from "react-icons/fi";
 
-const API_BASE = "https://queensplate-main-jw6so1.free.laravel.cloud/api/v1";
-const STORAGE_BASE = "https://queensplate-main-jw6so1.free.laravel.cloud/storage/";
+const API_BASE = "https://api.queensplate.store/api/v1";
+const STORAGE_BASE = "https://api.queensplate.store/api/v1/storage";
 
 export const FeaturedMenu = () => {
   const [foods, setFoods] = useState([]);

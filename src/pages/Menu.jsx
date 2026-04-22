@@ -14,8 +14,8 @@ import {
   GlassWater,
 } from "lucide-react";
 
-const API_BASE = "https://queensplate-main-jw6so1.free.laravel.cloud/api/v1";
-const STORAGE_BASE = "https://queensplate-main-jw6so1.free.laravel.cloud/storage/";
+const API_BASE = "https://api.queensplate.store/api/v1";
+const STORAGE_BASE = "https://api.queensplate.store/api/v1/storage"; 
 
 const categoryIcons = {
   "Rice Dishes": <UtensilsCrossed size={28} />,

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BASE_URL =
-  "https://queensplate-main-jw6so1.free.laravel.cloud/api/v1";
+  "https://api.queensplate.store/api/v1";
 
 export const getMenu = async () => {
   const res = await axios.get(`${BASE_URL}/menu`);
