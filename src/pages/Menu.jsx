@@ -607,15 +607,22 @@ export const Menu = () => {
       const json = await res.json();
 
       if (json.success) {
-        const cats = json.data.categories;
+        const rawCats = json.data.categories;
         const meals = json.data.featured_meals;
 
-        setCategories(cats);
+        // --- DEDUPLICATION LOGIC ---
+        // Keeps only the first occurrence of a category name
+        const uniqueCats = rawCats.filter(
+          (cat, index, self) =>
+            index === self.findIndex((c) => c.name === cat.name)
+        );
+
+        setCategories(uniqueCats);
         setAllMeals(meals);
 
-        // Default to first category
-        if (cats.length > 0) {
-          handleTabClick(cats[0].name, cats[0].id, meals);
+        // Default to first unique category
+        if (uniqueCats.length > 0) {
+          handleTabClick(uniqueCats[0].name, uniqueCats[0].id, meals);
         }
       }
     } catch (err) {
@@ -627,16 +634,23 @@ export const Menu = () => {
 
   const handleTabClick = (catName, catId, mealsToFilter = allMeals) => {
     setActiveTab(catName);
-    
-    // Filter logic: if "All" show everything, else filter by category_id
-    const filtered = catName === "All" 
-      ? mealsToFilter 
-      : mealsToFilter.filter(meal => String(meal.category_id) === String(catId));
 
-    const formatted = filtered.map(meal => ({
+    // Filter logic: if "All" show everything, else filter by category_id
+    const filtered =
+      catName === "All"
+        ? mealsToFilter
+        : mealsToFilter.filter(
+            (meal) => String(meal.category_id) === String(catId)
+          );
+
+    const formatted = filtered.map((meal) => ({
       ...meal,
       formattedPrice: `₦${Number(meal.price).toLocaleString()}`,
-      finalImage: meal.image?.startsWith("http") ? meal.image : `${STORAGE_BASE}/${meal.image}`
+      finalImage: meal.image?.startsWith("http")
+        ? meal.image
+        : `${STORAGE_BASE}/${meal.image}`,
+      // FIX: Ensure availability string "1" is treated as boolean true
+      isAvailable: String(meal.is_available) === "1",
     }));
 
     setDisplayedFoods(formatted);
@@ -677,16 +691,24 @@ export const Menu = () => {
               >
                 <div
                   className={`w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-[28px] flex items-center justify-center transition-all duration-300 ${
-                    activeTab === cat.name ? "bg-white shadow-lg" : "bg-white/50 hover:bg-white"
+                    activeTab === cat.name
+                      ? "bg-white shadow-lg"
+                      : "bg-white/50 hover:bg-white"
                   }`}
                 >
-                  <div className={activeTab === cat.name ? "text-[#A41C2E]" : "text-gray-600"}>
+                  <div
+                    className={
+                      activeTab === cat.name ? "text-[#A41C2E]" : "text-gray-600"
+                    }
+                  >
                     {categoryIcons[cat.name] || <UtensilsCrossed size={28} />}
                   </div>
                 </div>
-                <span className={`mt-2 font-semibold text-xs md:text-sm whitespace-nowrap ${
-                  activeTab === cat.name ? "text-[#A41C2E]" : "text-gray-500"
-                }`}>
+                <span
+                  className={`mt-2 font-semibold text-xs md:text-sm whitespace-nowrap ${
+                    activeTab === cat.name ? "text-[#A41C2E]" : "text-gray-500"
+                  }`}
+                >
                   {cat.name}
                 </span>
               </motion.div>
@@ -697,9 +719,12 @@ export const Menu = () => {
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 min-h-[300px]">
             <AnimatePresence mode="wait">
               {loading ? (
-                 [...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-white p-4 rounded-2xl animate-pulse h-64" />
-                 ))
+                [...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white p-4 rounded-2xl animate-pulse h-64"
+                  />
+                ))
               ) : displayedFoods.length > 0 ? (
                 displayedFoods.map((food, index) => (
                   <motion.div
@@ -716,7 +741,9 @@ export const Menu = () => {
                         src={food.finalImage}
                         alt={food.name}
                         loading="lazy"
-                        className="w-full h-28 md:h-40 object-cover"
+                        className={`w-full h-28 md:h-40 object-cover ${
+                          !food.isAvailable ? "grayscale opacity-60" : ""
+                        }`}
                         onError={handleImageError}
                       />
                     </div>
@@ -724,17 +751,27 @@ export const Menu = () => {
                       {food.name}
                     </h3>
                     <div className="flex justify-between items-center mt-1 md:mt-2">
-                      <span className="text-red-600 text-xs md:text-sm font-semibold">{food.formattedPrice}</span>
-                      <motion.div whileHover={{ scale: 1.1 }} className="bg-yellow-100 text-yellow-500 p-1.5 md:p-2 rounded-full cursor-pointer">
+                      <span className="text-red-600 text-xs md:text-sm font-semibold">
+                        {food.formattedPrice}
+                      </span>
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="bg-yellow-100 text-yellow-500 p-1.5 md:p-2 rounded-full cursor-pointer"
+                      >
                         <FiShoppingCart size={14} />
                       </motion.div>
                     </div>
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="mt-2 md:mt-4 bg-red-600 hover:bg-red-700 text-white w-full py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition"
+                      whileHover={food.isAvailable ? { scale: 1.02 } : {}}
+                      whileTap={food.isAvailable ? { scale: 0.98 } : {}}
+                      disabled={!food.isAvailable}
+                      className={`mt-2 md:mt-4 w-full py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition ${
+                        food.isAvailable
+                          ? "bg-red-600 hover:bg-red-700 text-white"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
                     >
-                      Order Now
+                      {food.isAvailable ? "Order Now" : "Not Available"}
                     </motion.button>
                   </motion.div>
                 ))

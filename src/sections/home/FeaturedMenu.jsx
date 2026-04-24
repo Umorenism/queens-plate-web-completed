@@ -13,54 +13,52 @@ export const FeaturedMenu = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchMenu = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const res = await fetch(`${API_BASE}/web-menu`);
+      const res = await fetch(`${API_BASE}/web-menu`);
+      if (!res.ok) throw new Error("Network response was not ok");
 
-        if (!res.ok) throw new Error("Network response was not ok");
+      const data = await res.json();
 
-        const data = await res.json();
-
-        if (data.success && data.data?.featured_meals?.length > 0) {
-          const formatted = data.data.featured_meals.map((meal) => {
-            // --- IMAGE FIX LOGIC ---
-            let finalImageUrl = meal.image;
-            if (meal.image) {
-              // If it's a Cloudinary/External link, use as is. 
-              // Otherwise, prepend the storage base.
-              if (!meal.image.startsWith("http")) {
-                finalImageUrl = `${STORAGE_BASE}${meal.image}`;
-              }
-            } else {
-              finalImageUrl = "https://placehold.co/400x400?text=No+Image";
+      if (data.success && data.data?.featured_meals?.length > 0) {
+        const formatted = data.data.featured_meals.map((meal) => {
+          // --- IMAGE FIX LOGIC ---
+          let finalImageUrl = meal.image;
+          if (meal.image) {
+            if (!meal.image.startsWith("http")) {
+              finalImageUrl = `${STORAGE_BASE}${meal.image}`;
             }
+          } else {
+            finalImageUrl = "https://placehold.co/400x400?text=No+Image";
+          }
 
-            return {
-              id: meal.id,
-              name: meal.name,
-              price: `₦${Number(meal.price).toLocaleString()}`,
-              image: finalImageUrl,
-              is_available: meal.is_available === 1,
-            };
-          });
+          return {
+            id: meal.id,
+            name: meal.name,
+            price: `₦${Number(meal.price).toLocaleString()}`,
+            image: finalImageUrl,
+            // FIX: Compare as string "1" OR convert to Number
+            is_available: String(meal.is_available) === "1", 
+          };
+        });
 
-          setFoods(formatted);
-        } else {
-          setError("No featured meals available right now.");
-        }
-      } catch (err) {
-        console.error("Failed to fetch featured menu:", err);
-        setError("Unable to load menu. Please check your internet connection.");
-      } finally {
-        setLoading(false);
+        setFoods(formatted);
+      } else {
+        setError("No featured meals available right now.");
       }
-    };
+    } catch (err) {
+      console.error("Failed to fetch featured menu:", err);
+      setError("Unable to load menu. Please check your internet connection.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchMenu();
-  }, []);
+  fetchMenu();
+}, []);
 
   const handleImageError = (e) => {
     e.target.onerror = null; 
